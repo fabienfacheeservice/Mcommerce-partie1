@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -73,6 +74,8 @@ public class ProductController {
 
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
 
+        checkProductPrice(product.getPrix());
+
         Product productAdded =  productDao.save(product);
 
         if (productAdded == null)
@@ -85,6 +88,14 @@ public class ProductController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    // Méthode qui renvoi une exception si le prix passé en paramètre est égal à 0.
+    // Reutilisable si l'on doit l'appliquer dans la mise à jour du produit
+    private void checkProductPrice(int prix) {
+        if(prix == 0){
+            throw new ProduitGratuitException("Un produit ne peut pas avoir un prix de vente égale à 0");
+        }
     }
 
     @DeleteMapping (value = "/Produits/{id}")
