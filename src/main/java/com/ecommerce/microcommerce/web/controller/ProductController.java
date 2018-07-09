@@ -6,6 +6,7 @@ import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Api( description="API pour es opérations CRUD sur les produits.")
@@ -103,6 +107,14 @@ public class ProductController {
         return productDao.chercherUnProduitCher(400);
     }
 
+    //Affichage de la marge utilisant une fonction lambda
+
+    @GetMapping(value= "/AdminProduits")
+    public Map<String,Integer> calculerMargeProduit() {
+        return productDao.findAll()
+                .stream()
+                .collect(Collectors.toMap(Product::toString, p -> p.getPrix() - p.getPrixAchat()));
+    }
 
 
 }
