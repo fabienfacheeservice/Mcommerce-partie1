@@ -116,5 +116,13 @@ public class ProductController {
                 .collect(Collectors.toMap(Product::toString, p -> p.getPrix() - p.getPrixAchat()));
     }
 
+    //Affichage de la liste trié en fonction du nom
+    // Aucune URI Specifique est demandé j'ai donc choisi un nom explicite
+    @GetMapping(value = "/ProduitsTriNom")
+    public List<Product> trierProduitsParOrdreAlphabetique(){
+        return productDao.findAllByOrderByNomAsc();
+    }
+
+
 
 }
